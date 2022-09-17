@@ -92,7 +92,7 @@ int AdpcmEncode(AdpcmSetup *set, int blocks)
 			return(-1);
 		if (ret<28)
 		{
-			printf("loop end!\n");
+			printf("Success!\n");
 			adpcm.flags = ADPCM_LOOP_END;
 		}
 
@@ -101,7 +101,7 @@ int AdpcmEncode(AdpcmSetup *set, int blocks)
 			adpcm.flags |= ADPCM_LOOP;
 			if (set->curblock == set->loopstart)
 			{
-				printf("loop start!\n");
+				printf("Loop start!\n");
 				adpcm.flags |= ADPCM_LOOP_START;
 			}
 		}

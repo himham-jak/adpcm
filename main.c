@@ -23,7 +23,7 @@ typedef struct
 {
 	int Position;
 	int Channel;
-	int ChannelCount;
+	int ChannelCount; // mono vs stereo
 	short *Sample;
 	int    SampleCount;
 } PcmBuffer;
@@ -52,7 +52,7 @@ int PutADPCM(void *priv, void *data, int len)
 	r = fwrite(data, 1, len, f);
 	if (r<0)
 	{
-		dprintf("write error (%s)\n", strerror(errno));
+		dprintf("Write error (%s)\n", strerror(errno));
 		return(-1);
 	}
 
@@ -72,8 +72,9 @@ int main(int argc, char *argv[])
 
 	if (argc<3)
 	{
-		dprintf("usage:   %s <PCM Input> <ADPCM Output> -s(tereo) -c[chunksize] -l[loopstart]\n", argv[0]);
-		dprintf("example: %s - output.adpcm -s -c1024 -s1000\n", argv[0]);
+		dprintf("Usage:   %s <PCM Input> <ADPCM Output> -s(tereo) -c[chunksize] -l[loopstart]\n", argv[0]);
+		dprintf("Example: %s - output.adpcm -s -c1024\n", argv[0]);
+		dprintf("Your input and output file should match mono/stereo for best results.");
 
 		return(1);
 	}
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
 		case 'c':
 			if (num<=0 || num >= 65536)
 			{
-				dprintf("%s: invalid block size (%ld, '%s')\n", argv[0], num, &argv[i][2]);
+				dprintf("%s: Invalid block size (%ld, '%s')\n", argv[0], num, &argv[i][2]);
 				return(1);
 			}
 			bpc = num;
@@ -104,13 +105,13 @@ int main(int argc, char *argv[])
 		case 'l':
 			if (num<0)
 			{
-				dprintf("%s: invalid loop start address (%ld, '%s')\n", argv[0], num, &argv[i][2]);
+				dprintf("%s: Invalid loop start address (%ld, '%s')\n", argv[0], num, &argv[i][2]);
 				return(1);
 			}
 			loopstart = num;
 			break;
 		default:
-			dprintf("%s: unkown option '%s'\n", argv[0], argv[i]);
+			dprintf("%s: Unknown option '%s'\n", argv[0], argv[i]);
 			return(1);
 			break;
 		}
