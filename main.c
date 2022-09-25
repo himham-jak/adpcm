@@ -61,6 +61,9 @@ int PutADPCM(void *priv, void *data, int len)
 
 int main(int argc, char *argv[])
 {
+	char header1[] = "MIS-JAK1";
+	char header2[] = "000000000000000000000000";
+	char header3[] = "SAMPLE-MONOADPCM";
 	char *infile, *outfile;
 	FILE *fi, *fo;
 	int bpc = 1024; /* ADPCM (16byte, 28sample) blocks per chunk */
@@ -69,12 +72,13 @@ int main(int argc, char *argv[])
 	PcmBuffer pcm;
 
 	pcm.ChannelCount = 1;
+	int type = 0;	// 0 for adpcm, 1 for mis
 
 	if (argc<3)
 	{
-		dprintf("Usage:   %s <PCM Input> <ADPCM Output> -s(tereo) -c[chunksize] -l[loopstart]\n", argv[0]);
-		dprintf("Example: %s - output.adpcm -s -c1024\n", argv[0]);
-		dprintf("Jak 1 Example:   %s input.wav output.adpcm -c1024\n", argv[0]);
+		dprintf("Usage:   %s <PCM Input> <ADPCM/MIS Output> -m(is) -s(tereo) -c[chunksize] -l[loopstart]\n", argv[0]);
+		dprintf("Jak 1 .adpcm Example:   %s input.wav output.adpcm\n", argv[0]);
+		dprintf("Jak 1 .mis Example:   %s input.wav output.mis -m\n", argv[0]);
 		dprintf("Your input and output file should match mono/stereo for best results.");
 
 		return(1);
@@ -95,6 +99,7 @@ int main(int argc, char *argv[])
 		switch(argv[i][1])
 		{
 		case 's': pcm.ChannelCount = 2; break;
+		case 'm': type = 1; break;
 		case 'c':
 			if (num<=0 || num >= 65536)
 			{
@@ -118,7 +123,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-
 	if (!strcmp(infile, "-"))
 		fi = stdin;
 	else
@@ -132,6 +136,13 @@ int main(int argc, char *argv[])
 	}
 
 	fo = fopen(outfile, "wb");
+
+	if(type == 1) {
+		PutADPCM(fo, &header1, 8);
+		PutADPCM(fo, &header2, 24);
+		PutADPCM(fo, &header3, 16);
+	}
+
 	if (fo==NULL)
 	{
 		dprintf("Failed to open output file '%s' (%s)\n", outfile, strerror(errno));
