@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 	{
 		dprintf("Usage:   %s <PCM Input> <ADPCM Output> -s(tereo) -c[chunksize] -l[loopstart]\n", argv[0]);
 		dprintf("Example: %s - output.adpcm -s -c1024\n", argv[0]);
+		dprintf("Jak 1 Example:   %s input.wav output.adpcm -c1024\n", argv[0]);
 		dprintf("Your input and output file should match mono/stereo for best results.");
 
 		return(1);
