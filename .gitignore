@@ -1,2 +1,6 @@
 main.exe
 tcc.exe
+include/
+lib/
+libtcc/
+libtcc.dll
